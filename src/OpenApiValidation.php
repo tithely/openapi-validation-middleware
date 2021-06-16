@@ -244,10 +244,10 @@ class OpenApiValidation implements MiddlewareInterface
         $values['query'] = $request->getQueryParams();
 
         if (!$this->options['additionalParameters']) {
-            $errors = array_merge($errors, $this->checkAdditionalParamters($parameters, $values));
+            $errors = array_merge($errors, $this->checkAdditionalParameters($parameters, $values));
         }
         if ($this->options['setDefaultParameters']) {
-            $request         = $this->setDefaultParamterValues($parameters, $request, $values);
+            $request         = $this->setDefaultParameterValues($parameters, $request, $values);
             $values['query'] = $request->getQueryParams();
         }
 
@@ -414,7 +414,6 @@ class OpenApiValidation implements MiddlewareInterface
                 'code'    => 'error_server',
                 'message' => $e->getMessage(),
             ]];
-            return [$e->getMessage()];
         }
         if (!$result->isValid()) {
             foreach ($result->getErrors() as $error) {
@@ -462,7 +461,7 @@ class OpenApiValidation implements MiddlewareInterface
         return $errors;
     }
 
-    private function checkAdditionalParamters(array $parameters, array $values) : array
+    private function checkAdditionalParameters(array $parameters, array $values) : array
     {
         $errors  = [];
         $defined = ['path' => [], 'query' => [], 'header' => [], 'cookie' => []];
@@ -483,7 +482,7 @@ class OpenApiValidation implements MiddlewareInterface
         return $errors;
     }
 
-    private function setDefaultParamterValues(array $parameters, ServerRequestInterface $request, array $values) : ServerRequestInterface
+    private function setDefaultParameterValues(array $parameters, ServerRequestInterface $request, array $values) : ServerRequestInterface
     {
         foreach ($parameters as $parameter) {
             if ('query' == $parameter->in && !isset($values['query'][$parameter->name]) && isset($parameter->name, $parameter->schema->default)) {
